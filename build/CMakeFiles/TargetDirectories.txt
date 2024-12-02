@@ -1,0 +1,4 @@
+/Users/nickwoods/Repos/advent-of-code-24/build/CMakeFiles/day01.dir
+/Users/nickwoods/Repos/advent-of-code-24/build/CMakeFiles/day02.dir
+/Users/nickwoods/Repos/advent-of-code-24/build/CMakeFiles/edit_cache.dir
+/Users/nickwoods/Repos/advent-of-code-24/build/CMakeFiles/rebuild_cache.dir
