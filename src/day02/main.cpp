@@ -11,7 +11,7 @@ bool is_all_increasing(string line)
     bool is_safe = true;
     while (ss >> a)
     {
-        if ((a <= b | abs(a - b) > 3) && i >= 1)
+        if ((a <= b || abs(a - b) > 3) && i >= 1)
         {
             is_safe = false;
         }
@@ -28,7 +28,7 @@ bool is_all_decreasing(string line)
     bool is_safe = true;
     while (ss >> a)
     {
-        if ((a >= b | abs(a - b) > 3) && i >= 1)
+        if ((a >= b || abs(a - b) > 3) && i >= 1)
         {
             is_safe = false;
         }
@@ -40,6 +40,13 @@ bool is_all_decreasing(string line)
 
 bool fault_tolerant_is_safe(string line)
 {
+    // Without fault removal
+    if (is_all_increasing(line) || is_all_decreasing(line))
+    {
+        return true;
+    }
+
+    // With fault removal
     stringstream ss(line);
     int a;
     int num_levels = 0;
@@ -48,7 +55,6 @@ bool fault_tolerant_is_safe(string line)
         num_levels++;
     }
 
-    bool is_safe = false;
     for (int i = 0; i < num_levels; i++)
     {
         int j = 0;
@@ -63,12 +69,12 @@ bool fault_tolerant_is_safe(string line)
             }
             j++;
         }
-        if (is_all_increasing(line_tmp) | is_all_decreasing(line_tmp))
+        if (is_all_increasing(line_tmp) || is_all_decreasing(line_tmp))
         {
-            is_safe = true;
+            return true;
         }
     }
-    return is_safe;
+    return false;
 }
 
 int star1(vector<string> lines)
@@ -77,7 +83,7 @@ int star1(vector<string> lines)
     for (int i = 0; i < N; i++)
     {
         string line = lines[i];
-        bool is_safe = is_all_increasing(line) | is_all_decreasing(line);
+        bool is_safe = is_all_increasing(line) || is_all_decreasing(line);
         if (is_safe)
         {
             num_safe++;
