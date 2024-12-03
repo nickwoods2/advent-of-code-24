@@ -1,8 +1,8 @@
-# Advent of code 2024 in C++
+# advent of code 2024 in c++
 
-## Run day XX
-1. Navigate to `/src/dayXX`
+## run day xx
+1. navigate to `/src/dayXX`
 
-2. Compile `g++ -o main main.cpp`
+2. compile `g++ -o main main.cpp`
 
-3. Execute `./main` or `./main > input`
+3. execute `./main` or `./main > input`
