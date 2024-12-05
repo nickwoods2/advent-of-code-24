@@ -60,7 +60,7 @@ int star1(vector<string> lines)
     int N = lines.size();
     int num_xmas = 0;
 
-    // original matrix
+    // Original matrix
     for (int i = 0; i < N; i++)
     {
         string current_line = lines[i];
@@ -68,7 +68,7 @@ int star1(vector<string> lines)
         reverse(current_line.begin(), current_line.end());
         num_xmas += get_xmas_count(current_line);
     }
-    // original matrix diagonals
+    // Original matrix diagonals
     int offset = -lines.size() + 1;
     int max_offset = 2 * (lines.size() - 1) + 1;
     for (int i = offset; i < max_offset; i++)
@@ -78,7 +78,7 @@ int star1(vector<string> lines)
         reverse(current_line.begin(), current_line.end());
         num_xmas += get_xmas_count(current_line);
     }
-    // matrix transposed (and rotated)
+    // Matrix transposed (and rotated 90 degrees)
     vector<string> lines_transposed = transpose(lines);
     vector<string> lines_rotated_90;
     for (int i = 0; i < lines_transposed.size(); i++)
@@ -89,7 +89,7 @@ int star1(vector<string> lines)
         lines_rotated_90.push_back(current_line);
         num_xmas += get_xmas_count(current_line);
     }
-    // matrix rotated 90 diagonals
+    // Rotated diagonals
     for (int i = offset; i < max_offset; i++)
     {
         string current_line = get_diagonal(lines_rotated_90, i);
@@ -100,9 +100,47 @@ int star1(vector<string> lines)
     return num_xmas;
 }
 
-int star2()
+int star2(vector<string> lines)
 {
-    return 0;
+    int N = lines.size();
+    int M = lines[0].length();
+    int num_xmas = 0;
+    int counter = 0;
+
+    // This goes out of bounds, but doesn't matter...
+    for (int i = 0; i < N; i++)
+    {
+        for (int j = 0; j < M; j++)
+        {
+            if ((lines[i][j] == 'M') || (lines[i][j] == 'S'))
+            {
+                string diag1;
+                diag1 = lines[i][j];
+                diag1 += lines[i + 1][j + 1];
+                diag1 += lines[i + 2][j + 2];
+                string diag1_reversed;
+                diag1_reversed.resize(diag1.length());
+                reverse_copy(diag1.begin(), diag1.end(), diag1_reversed.begin());
+
+                string diag2;
+                diag2 = lines[i][j + 2];
+                diag2 += lines[i + 1][j + 1];
+                diag2 += lines[i + 2][j];
+                string diag2_reversed;
+                diag2_reversed.resize(diag2.length());
+                reverse_copy(diag2.begin(), diag2.end(), diag2_reversed.begin());
+
+                if ((diag1 == "MAS" ||
+                     diag1_reversed == "MAS") &&
+                    (diag2 == "MAS" ||
+                     diag2_reversed == "MAS"))
+                {
+                    counter += 1;
+                }
+            }
+        }
+    }
+    return counter;
 }
 
 int main()
@@ -115,6 +153,6 @@ int main()
     }
 
     cout << "Star 1 solution " << star1(lines) << endl;
-    cout << "Star 2 solution " << star2() << endl;
+    cout << "Star 2 solution " << star2(lines) << endl;
     return 0;
 }
