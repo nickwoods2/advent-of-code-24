@@ -4,7 +4,7 @@
 #include <set>
 using namespace std;
 
-int star1(vector<vector<char>> room, array<int, 2> position, char direction)
+set<array<int, 2>> get_visited(vector<vector<char>> room, array<int, 2> position, char direction)
 {
     char object_ahead = '.';
     int i = position[0], j = position[1];
@@ -64,7 +64,7 @@ int star1(vector<vector<char>> room, array<int, 2> position, char direction)
             j = j_ahead;
         }
     }
-    return visited.size();
+    return visited;
 }
 
 bool loop_exists(vector<vector<char>> room, array<int, 2> position, char direction)
@@ -141,29 +141,35 @@ bool loop_exists(vector<vector<char>> room, array<int, 2> position, char directi
     }
 }
 
+int star1(vector<vector<char>> room, array<int, 2> position, char direction)
+{
+    set<array<int, 2>> visited = get_visited(room, position, direction);
+    return visited.size();
+}
+
 int star2(vector<vector<char>> room, array<int, 2> position, char direction)
 {
+    // Get positions that were visited by guard
+    set<array<int, 2>> visited = get_visited(room, position, direction);
+
+    // Brute force search over those positions placing #s and checking for loops
     bool is_loop = false;
     int num_loops = 0;
-    int total = room.size() * room[0].size();
-    int counter = 0;
-    for (int i = 1; i < room.size() - 1; i++)
+    for (const auto &pos : visited)
     {
-        for (int j = 1; j < room[i].size() - 1; j++)
+        int i = pos[0];
+        int j = pos[1];
+        if (i == position[0] && j == position[1])
         {
-            if (i == position[0] && j == position[1])
-            {
-                continue;
-            }
-            char placeholder = room[i][j];
-            room[i][j] = '#';
-            is_loop = loop_exists(room, position, direction);
-            room[i][j] = placeholder;
-            counter += 1;
-            if (is_loop)
-            {
-                num_loops += 1;
-            }
+            continue;
+        }
+        char swap = room[i][j];
+        room[i][j] = '#';
+        is_loop = loop_exists(room, position, direction);
+        room[i][j] = swap;
+        if (is_loop)
+        {
+            num_loops += 1;
         }
     }
     return num_loops;
