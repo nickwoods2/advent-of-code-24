@@ -50,32 +50,8 @@ bool valid_position(pair<int, int> position,
 vector<pair<int, int>> get_antinodes(pair<int, int> first_antenna_pos,
                                      pair<int, int> second_antenna_pos,
                                      int num_rows,
-                                     int num_cols)
-{
-    vector<pair<int, int>> antinodes;
-    pair<int, int> antinode;
-
-    int delta_row = first_antenna_pos.first - second_antenna_pos.first;
-    int delta_col = first_antenna_pos.second - second_antenna_pos.second;
-    antinode = {first_antenna_pos.first + delta_row,
-                first_antenna_pos.second + delta_col};
-    if (valid_position(antinode, num_rows, num_cols))
-    {
-        antinodes.push_back(antinode);
-    }
-    antinode = {second_antenna_pos.first - delta_row,
-                second_antenna_pos.second - delta_col};
-    if (valid_position(antinode, num_rows, num_cols))
-    {
-        antinodes.push_back(antinode);
-    }
-    return antinodes;
-}
-
-vector<pair<int, int>> get_antinodes_star2(pair<int, int> first_antenna_pos,
-                                           pair<int, int> second_antenna_pos,
-                                           int num_rows,
-                                           int num_cols)
+                                     int num_cols,
+                                     int star)
 {
     vector<pair<int, int>> antinodes;
     pair<int, int> antinode;
@@ -84,8 +60,14 @@ vector<pair<int, int>> get_antinodes_star2(pair<int, int> first_antenna_pos,
     int delta_col = first_antenna_pos.second - second_antenna_pos.second;
     int updated_row, updated_col;
 
+    // First direction
     updated_row = first_antenna_pos.first;
     updated_col = first_antenna_pos.second;
+    if (star == 1)
+    {
+        updated_row += delta_row;
+        updated_col += delta_col;
+    }
     while (true)
     {
         antinode = {updated_row,
@@ -93,6 +75,10 @@ vector<pair<int, int>> get_antinodes_star2(pair<int, int> first_antenna_pos,
         if (valid_position(antinode, num_rows, num_cols))
         {
             antinodes.push_back(antinode);
+            if (star == 1)
+            {
+                break;
+            }
             updated_row += delta_row;
             updated_col += delta_col;
         }
@@ -102,8 +88,14 @@ vector<pair<int, int>> get_antinodes_star2(pair<int, int> first_antenna_pos,
         }
     }
 
+    // Second direction
     updated_row = second_antenna_pos.first;
     updated_col = second_antenna_pos.second;
+    if (star == 1)
+    {
+        updated_row -= delta_row;
+        updated_col -= delta_col;
+    }
     while (true)
     {
         antinode = {updated_row,
@@ -111,6 +103,10 @@ vector<pair<int, int>> get_antinodes_star2(pair<int, int> first_antenna_pos,
         if (valid_position(antinode, num_rows, num_cols))
         {
             antinodes.push_back(antinode);
+            if (star == 1)
+            {
+                break;
+            }
             updated_row -= delta_row;
             updated_col -= delta_col;
         }
@@ -126,6 +122,7 @@ int star1(Input input)
 {
     set<pair<int, int>> antinodes;
     vector<pair<int, int>> antinodes_placeholder;
+    int star = 1;
     for (const auto &kv_pairs : input.antenna_positions)
     {
         char key = kv_pairs.first;
@@ -137,7 +134,8 @@ int star1(Input input)
             {
                 antinodes_placeholder = get_antinodes(val[i], val[j],
                                                       input.num_rows,
-                                                      input.num_cols);
+                                                      input.num_cols,
+                                                      star);
                 for (pair<int, int> antinode : antinodes_placeholder)
                 {
                     antinodes.insert(antinode);
@@ -152,6 +150,7 @@ int star2(Input input)
 {
     set<pair<int, int>> antinodes;
     vector<pair<int, int>> antinodes_placeholder;
+    int star = 2;
     for (const auto &kv_pairs : input.antenna_positions)
     {
         char key = kv_pairs.first;
@@ -161,9 +160,10 @@ int star2(Input input)
         {
             for (int j = i + 1; j < num_antennas; j++)
             {
-                antinodes_placeholder = get_antinodes_star2(val[i], val[j],
-                                                            input.num_rows,
-                                                            input.num_cols);
+                antinodes_placeholder = get_antinodes(val[i], val[j],
+                                                      input.num_rows,
+                                                      input.num_cols,
+                                                      star);
                 for (pair<int, int> antinode : antinodes_placeholder)
                 {
                     antinodes.insert(antinode);
@@ -176,7 +176,6 @@ int star2(Input input)
 
 int main()
 {
-
     Input input = read_input();
     cout << "Star 1 solution " << star1(input) << endl;
     cout << "Star 2 solution " << star2(input) << endl;
