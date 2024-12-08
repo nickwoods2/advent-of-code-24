@@ -10,6 +10,47 @@ struct Input
     vector<vector<long long>> components;
 };
 
+Input read_input()
+{
+    vector<string> calibation_equations;
+    ifstream file("input.txt");
+    for (string line; getline(file, line) && !line.empty();)
+    {
+        for (long long i = 0; i < line.size(); i++)
+        {
+            if (line[i] == ':')
+            {
+                line[i] = ' ';
+            }
+        }
+        calibation_equations.push_back(line);
+    }
+
+    vector<long long> totals;
+    vector<vector<long long>> components;
+    long long num;
+    for (const auto &equation : calibation_equations)
+    {
+        stringstream ss(equation);
+        vector<long long> components_given_expression;
+        bool isFirst = true;
+        while (ss >> num)
+        {
+            if (isFirst)
+            {
+                totals.push_back(num);
+                isFirst = false;
+            }
+            else
+            {
+                components_given_expression.push_back(num);
+            }
+        }
+        components.push_back(components_given_expression);
+    }
+    return Input{totals, components};
+}
+
 set<string> get_permutations(vector<char> possible_operations, int num_operations)
 {
     set<string> permutations;
@@ -23,11 +64,8 @@ set<string> get_permutations(vector<char> possible_operations, int num_operation
     for (int k = 1; k < possible_operations.size(); k++)
     {
         char swap_operator = possible_operations[k];
-        // Iterate through all pre-existing permutations and
-        // perform a swap of original_operator --> swap_operator
         for (int j = 0; j < num_operations; j++)
         {
-            // Iterate through each position long longo which an operator can slot
             for (const string permutation : permutations)
             {
                 for (long long i = 0; i < num_operations; i++)
@@ -44,7 +82,6 @@ set<string> get_permutations(vector<char> possible_operations, int num_operation
 
 long long get_result(Input calibration_equations, vector<char> possible_operations)
 {
-
     set<int> expression_sizes;
     for (int j = 0; j < calibration_equations.totals.size(); j++)
     {
@@ -55,13 +92,11 @@ long long get_result(Input calibration_equations, vector<char> possible_operatio
     set<string> permutations;
     for (int size : expression_sizes)
     {
-        // cout << "Getting permutations of size: " << size << endl;
         permutations = get_permutations(possible_operations, size);
         permutations_cached[size] = permutations;
     }
 
     long long result = 0;
-    // Loop over lines in input
     for (int j = 0; j < calibration_equations.totals.size(); j++)
     {
         vector<long long> components = calibration_equations.components[j];
@@ -70,7 +105,6 @@ long long get_result(Input calibration_equations, vector<char> possible_operatio
 
         permutations = permutations_cached[num_operations];
         long long running_total = 0;
-        // Loop over all permutations of operations
         for (const string &permutation : permutations)
         {
             running_total = components[0];
@@ -111,47 +145,6 @@ long long star2(Input calibration_equations)
 {
     vector<char> possible_operations = {'+', '*', '|'};
     return get_result(calibration_equations, possible_operations);
-}
-
-Input read_input()
-{
-    vector<string> calibation_equations;
-    ifstream file("input.txt");
-    for (string line; getline(file, line) && !line.empty();)
-    {
-        for (long long i = 0; i < line.size(); i++)
-        {
-            if (line[i] == ':')
-            {
-                line[i] = ' ';
-            }
-        }
-        calibation_equations.push_back(line);
-    }
-
-    vector<long long> totals;
-    vector<vector<long long>> components;
-    long long num;
-    for (const auto &equation : calibation_equations)
-    {
-        stringstream ss(equation);
-        vector<long long> components_given_expression;
-        bool isFirst = true;
-        while (ss >> num)
-        {
-            if (isFirst)
-            {
-                totals.push_back(num);
-                isFirst = false;
-            }
-            else
-            {
-                components_given_expression.push_back(num);
-            }
-        }
-        components.push_back(components_given_expression);
-    }
-    return Input{totals, components};
 }
 
 int main()
